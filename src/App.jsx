@@ -1,8 +1,9 @@
 import { useState, useRef } from 'react'
 import { BackgroundGradientAnimation } from './components/ui/background-gradient-animation'
 import confetti from 'canvas-confetti'
-import { Music2, Sparkles, ArrowRight } from 'lucide-react'
+import { Music2, Sparkles, ArrowRight, Images, PartyPopper } from 'lucide-react'
 
+import { Gallery } from './pages/Gallery'
 import { BirthdayForm } from './components/birthday/BirthdayForm'
 import { AgeCounter } from './components/birthday/AgeCounter'
 import { GachaGift } from './components/birthday/GachaGift'
@@ -17,7 +18,7 @@ import { useAge } from './hooks/useAge'
 import { useMusic } from './hooks/useMusic'
 
 export default function App() {
-  const [page, setPage] = useState('form')
+  const [page, setPage] = useState('gallery')
   const [recipient, setRecipient] = useState({ name: '', date: '' })
   const [openedGifts, setOpenedGifts] = useState(new Set())
 
@@ -53,6 +54,13 @@ export default function App() {
 
   const renderPage = () => {
     switch (page) {
+      case 'gallery':
+        return (
+          <section data-page-anim>
+            <Gallery onStartBirthday={() => setPage('form')} />
+          </section>
+        )
+
       case 'form':
         return <BirthdayForm onStart={handleStart} />
 
@@ -186,8 +194,14 @@ export default function App() {
       blendingValue="normal"
       className="text-neutral-800"
     >
-      <header className="relative z-20 flex min-h-14 items-center justify-end px-5 py-3 sm:px-8">
-        {!isPlaying && !musicError && page !== 'form' && (
+       <header className="relative z-20 flex min-h-14 items-center justify-between px-5 py-3 sm:px-8">
+        {page === 'gallery' && (
+          <nav className="flex items-center gap-3 text-sm text-[#5286A4]">
+            <Images size={16} />
+            <span>Galeri</span>
+          </nav>
+        )}
+        {!isPlaying && !musicError && page !== 'form' && page !== 'gallery' && (
           <button
             type="button"
             onClick={startMusic}
@@ -198,11 +212,22 @@ export default function App() {
           </button>
         )}
 
-        {isPlaying && (
+        {isPlaying && page !== 'gallery' && (
           <span className="inline-flex items-center gap-2 rounded-full bg-white/80 px-3 py-2 text-xs text-[#5286A4]">
             <span className="h-2 w-2 animate-pulse rounded-full bg-[#3199DF]" />
             Musik sedang diputar
           </span>
+        )}
+
+        {page !== 'gallery' && (
+          <button
+            type="button"
+            onClick={() => setPage('gallery')}
+            className="inline-flex items-center gap-2 rounded-full border border-[#D7E4EC] bg-white/90 px-4 py-2 text-sm font-medium text-[#5286A4] transition-colors hover:border-[#91B4C8] hover:bg-[#F0F7FA]"
+          >
+            <PartyPopper size={16} />
+            Kembali ke Galeri
+          </button>
         )}
       </header>
 
