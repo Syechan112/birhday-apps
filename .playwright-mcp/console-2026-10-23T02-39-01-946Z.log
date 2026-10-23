@@ -1,3 +1,0 @@
-[     366ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=97e75255:22164
-[     739ms] [ERROR] Failed to load resource: the server responded with a status of 416 (Range Not Satisfiable) @ http://localhost:5173/audio/birthday-music.mp3:0
-[   15569ms] [ERROR] Failed to load resource: the server responded with a status of 416 (Range Not Satisfiable) @ http://localhost:5173/audio/birthday-music.mp3:0

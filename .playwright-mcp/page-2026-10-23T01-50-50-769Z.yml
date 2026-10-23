@@ -1,8 +1,0 @@
-- generic [ref=f1e3]:
-  - banner [ref=f1e6]
-  - main [ref=f1e7]:
-    - generic [ref=f1e8]:
-      - heading "A little surprise!" [level=2] [ref=f1e9]
-      - textbox "Nama kamu siapa?" [ref=f1e10]
-      - textbox [ref=f1e11]
-      - button "Buka Hadiahmu!" [ref=f1e12]
