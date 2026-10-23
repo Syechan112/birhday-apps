@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.118.0",
     "animejs": "^4.3.6",
     "canvas-confetti": "^1.9.4",
     "html-to-image": "^1.11.13",

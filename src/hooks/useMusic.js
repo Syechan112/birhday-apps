@@ -3,63 +3,66 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 export function useMusic(src) {
   const audioRef = useRef(null)
   const [isPlaying, setIsPlaying] = useState(false)
-  const [hasStarted, setHasStarted] = useState(false)
   const [error, setError] = useState(null)
 
   useEffect(() => {
-    if (!src) return
+    if (!src) return undefined
+
     const audio = new Audio(src)
     audio.loop = true
-    audio.preload = 'auto'
+    audio.preload = 'metadata'
     audioRef.current = audio
 
-    const playOnInteraction = () => {
-      if (audioRef.current && !hasStarted) {
-        setHasStarted(true)
-        audioRef.current.play().then(() => {
-          setIsPlaying(true)
-          setError(null)
-        }).catch((e) => {
-          setError(e)
-          setIsPlaying(false)
-        })
-      }
+    const handlePlay = () => setIsPlaying(true)
+    const handlePause = () => setIsPlaying(false)
+    const handleError = () => {
+      setError(audio.error?.message || 'File musik tidak dapat diputar.')
+      setIsPlaying(false)
     }
 
-    document.addEventListener('click', playOnInteraction, { once: true })
-    document.addEventListener('keydown', playOnInteraction, { once: true })
+    audio.addEventListener('play', handlePlay)
+    audio.addEventListener('pause', handlePause)
+    audio.addEventListener('error', handleError)
 
     return () => {
-      document.removeEventListener('click', playOnInteraction)
-      document.removeEventListener('keydown', playOnInteraction)
-      if (audioRef.current) {
-        audioRef.current.pause()
-      }
+      audio.pause()
+      audio.src = ''
+      audioRef.current = null
     }
-  }, [src, hasStarted])
+  }, [src])
 
-  const startMusic = useCallback(() => {
-    if (audioRef.current && !hasStarted) {
-      setHasStarted(true)
-      audioRef.current.play().then(() => {
-        setIsPlaying(true)
-        setError(null)
-      }).catch((e) => {
-        setError(e)
-        setIsPlaying(false)
-      })
-    }
-  }, [hasStarted])
+  const startMusic = useCallback(async () => {
+    const audio = audioRef.current
+    if (!audio) return false
 
-  const toggleMusic = useCallback(() => {
-    if (!audioRef.current) return
-    if (isPlaying) {
-      audioRef.current.pause()
+    try {
+      await audio.play()
+      setError(null)
+      return true
+    } catch (playError) {
+      setError(playError?.message || 'Browser menolak pemutaran musik.')
       setIsPlaying(false)
-    } else {
-      audioRef.current.play().then(() => setIsPlaying(true)).catch(setError)
+      return false
     }
-  }, [isPlaying])
+  }, [])
 
-  return { isPlaying, hasStarted, error, startMusic, toggleMusic }
+  const stopMusic = useCallback(() => {
+    const audio = audioRef.current
+    if (!audio) return
+
+    audio.pause()
+    audio.currentTime = 0
+    setIsPlaying(false)
+  }, [])
+
+  const toggleMusic = useCallback(async () => {
+    if (isPlaying) {
+      audioRef.current?.pause()
+      return false
+    }
+
+    return startMusic()
+  }, [isPlaying, startMusic])
+
+  return { isPlaying, error, startMusic, stopMusic, toggleMusic }
 }

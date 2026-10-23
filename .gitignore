@@ -1,7 +1,43 @@
+# Dependencies
 node_modules/
-dist/
-*.local
-.DS_Store
+
+# Environment and secrets
 .env
-.env.*.local
+.env.*
+!.env.example
+
+# Build outputs
+dist/
+
+# Local tools and temporary files
 .playwright-mcp/
+.vite/
+*.log
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Planning and private project notes
+prd.md
+PRD.md
+**/prd.md
+**/PRD.md
+plan.md
+PLAN.md
+**/plan.md
+**/PLAN.md
+spec.md
+SPEC.md
+**/spec.md
+**/SPEC.md
+todos.md
+TODO.md
+**/TODO.md
+**/todos.md
+
+# Generated maps and coverage
+coverage/
+*.tsbuildinfo

@@ -1,17 +1,35 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { animate } from 'animejs'
-import { Check } from 'lucide-react'
+import { CalendarClock, Check } from 'lucide-react'
 
 import { GachaHeader } from './gacha/GachaHeader'
 import { GiftResult } from './gacha/GiftResult'
 import { RouletteTrack } from './gacha/RouletteTrack'
 import { DrawButton, ResetButton } from './gacha/DrawButton'
 import { getUniqueGifts, getRouletteItems } from '../../utils/gachaUtils'
+import { birthdayConfig } from '../../data/birthdayConfig'
+import { getTimeUntilBirthday } from '../../utils/birthdayCountdown'
+
+const MAX_DRAWS = 3
+const STORAGE_KEY = 'birthday-gacha-draws'
 
 export function GachaGift({ gift, isOpened = false, onOpen, gifts = [], openedGiftIds = [] }) {
+  const todayKey = new Date().toISOString().slice(0, 10)
+
+  const [drawCount, setDrawCount] = useState(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}')
+      return saved.date === todayKey ? saved.count : 0
+    } catch {
+      return 0
+    }
+  })
   const [isDrawing, setIsDrawing] = useState(false)
   const [isStopping, setIsStopping] = useState(false)
   const [selectedGift, setSelectedGift] = useState(null)
+  const [countdownDays, setCountdownDays] = useState(() =>
+    getTimeUntilBirthday(birthdayConfig.birthdayDate).days,
+  )
 
   const viewportRef = useRef(null)
   const trackRef = useRef(null)
@@ -22,19 +40,29 @@ export function GachaGift({ gift, isOpened = false, onOpen, gifts = [], openedGi
   const stoppingRef = useRef(false)
 
   const giftList = useMemo(() => getUniqueGifts(gifts, gift), [gift, gifts])
-  const availableGifts = useMemo(() => {
-    return giftList.filter((item) => {
-      if (item.isOpened || item.opened || openedGiftIds.includes(item.id)) return false
-      if (isOpened && !gifts.length && item.id === gift?.id) return false
-      return true
-    })
-  }, [giftList, gifts.length, isOpened, gift?.id, openedGiftIds])
+  const availableGifts = useMemo(() => giftList.filter((item) =>
+    !item.isOpened && !item.opened && !openedGiftIds.includes(item.id) &&
+    !(isOpened && !gifts.length && item.id === gift?.id),
+  ), [giftList, gifts.length, isOpened, gift?.id, openedGiftIds])
 
   const itemWidth = 100
   const itemGap = 8
   const itemStep = itemWidth + itemGap
   const cycleWidth = availableGifts.length * itemStep
   const rouletteItems = useMemo(() => getRouletteItems(availableGifts), [availableGifts])
+  const locked = drawCount >= MAX_DRAWS
+
+  useEffect(() => {
+    const timer = window.setInterval(() => {
+      const today = new Date().toISOString().slice(0, 10)
+      if (today !== todayKey) {
+        setDrawCount(0)
+        localStorage.removeItem(STORAGE_KEY)
+      }
+      setCountdownDays(getTimeUntilBirthday(birthdayConfig.birthdayDate).days)
+    }, 60_000)
+    return () => window.clearInterval(timer)
+  }, [todayKey])
 
   const stopAnimation = useCallback(() => {
     animationRef.current?.pause()
@@ -44,32 +72,31 @@ export function GachaGift({ gift, isOpened = false, onOpen, gifts = [], openedGi
   useEffect(() => () => stopAnimation(), [stopAnimation])
 
   const startDraw = () => {
-    if (drawingRef.current || !availableGifts.length || !viewportRef.current || !trackRef.current) return
+    if (drawingRef.current || locked || !availableGifts.length || !viewportRef.current || !trackRef.current) return
 
-    const winner = availableGifts[Math.floor(Math.random() * availableGifts.length)]
-    winnerRef.current = winner
+    winnerRef.current = availableGifts[Math.floor(Math.random() * availableGifts.length)]
     setSelectedGift(null)
     setIsStopping(false)
     stoppingRef.current = false
     drawingRef.current = true
     setIsDrawing(true)
     stopAnimation()
-
     positionRef.current.x = 0
     trackRef.current.style.transform = 'translateX(0px)'
 
-    const totalDistance = cycleWidth * 4
-
-    animationRef.current = animate(positionRef.current, {
-      x: -totalDistance,
-      duration: 7000,
-      ease: 'linear',
-      onUpdate: () => {
-        if (trackRef.current) {
-          trackRef.current.style.transform = `translateX(${positionRef.current.x}px)`
-        }
-      },
-    })
+    const spin = () => {
+      if (!drawingRef.current || !trackRef.current) return
+      animationRef.current = animate(positionRef.current, {
+        x: positionRef.current.x - cycleWidth,
+        duration: 1800,
+        ease: 'linear',
+        onUpdate: () => {
+          if (trackRef.current) trackRef.current.style.transform = `translateX(${positionRef.current.x}px)`
+        },
+        onComplete: spin,
+      })
+    }
+    spin()
   }
 
   const stopDraw = () => {
@@ -81,7 +108,6 @@ export function GachaGift({ gift, isOpened = false, onOpen, gifts = [], openedGi
 
     const winner = winnerRef.current
     const winnerIndex = availableGifts.findIndex((item) => item.id === winner.id)
-
     if (winnerIndex < 0 || cycleWidth <= 0) {
       drawingRef.current = false
       stoppingRef.current = false
@@ -93,7 +119,7 @@ export function GachaGift({ gift, isOpened = false, onOpen, gifts = [], openedGi
     const viewportWidth = viewportRef.current.clientWidth
     const currentX = positionRef.current.x
     const currentCycle = Math.floor(Math.abs(currentX) / cycleWidth)
-    const targetCycle = Math.min(currentCycle + 1, 5)
+    const targetCycle = currentCycle + 1
     const targetIndex = targetCycle * availableGifts.length + winnerIndex
     const targetX = -(targetIndex * itemStep + itemWidth / 2 - viewportWidth / 2)
     const destination = Math.min(targetX, currentX - cycleWidth)
@@ -103,9 +129,7 @@ export function GachaGift({ gift, isOpened = false, onOpen, gifts = [], openedGi
       duration: 1600,
       ease: 'out(4)',
       onUpdate: () => {
-        if (trackRef.current) {
-          trackRef.current.style.transform = `translateX(${positionRef.current.x}px)`
-        }
+        if (trackRef.current) trackRef.current.style.transform = `translateX(${positionRef.current.x}px)`
       },
       onComplete: () => {
         drawingRef.current = false
@@ -113,6 +137,11 @@ export function GachaGift({ gift, isOpened = false, onOpen, gifts = [], openedGi
         setIsDrawing(false)
         setIsStopping(false)
         setSelectedGift(winner)
+        setDrawCount((previous) => {
+          const next = Math.min(previous + 1, MAX_DRAWS)
+          localStorage.setItem(STORAGE_KEY, JSON.stringify({ date: todayKey, count: next }))
+          return next
+        })
         onOpen?.(winner.id)
       },
     })
@@ -120,7 +149,6 @@ export function GachaGift({ gift, isOpened = false, onOpen, gifts = [], openedGi
 
   const resetDraw = () => {
     if (drawingRef.current) return
-
     stopAnimation()
     winnerRef.current = null
     positionRef.current.x = 0
@@ -133,20 +161,33 @@ export function GachaGift({ gift, isOpened = false, onOpen, gifts = [], openedGi
   }
 
   return (
-    <section className="mx-auto w-full max-w-md overflow-hidden rounded-2xl bg-[#F0F7FA] shadow-[0_3px_18px_rgba(67,112,140,0.08)]">
+    <section className="mx-auto w-full max-w-md overflow-hidden rounded-2xl bg-white">
       <GachaHeader selectedGift={selectedGift} isDrawing={isDrawing} isStopping={isStopping} />
       <div className="px-4 pb-5 sm:px-5">
-        {selectedGift ? (
+        {locked ? (
+          <div className="flex flex-col items-center rounded-xl bg-pink-50 px-5 py-8 text-center">
+            <CalendarClock size={28} className="text-pink-500" />
+            <p className="mt-3 font-semibold text-neutral-900">Semua 3 hadiah sudah dibuka</p>
+            <p className="mt-1 text-sm leading-6 text-neutral-600">
+              Draw berikutnya tersedia dalam {countdownDays} hari, saat ulang tahun berikutnya.
+            </p>
+          </div>
+        ) : selectedGift ? (
           <GiftResult gift={selectedGift} />
         ) : availableGifts.length ? (
           <RouletteTrack viewportRef={viewportRef} trackRef={trackRef} rouletteItems={rouletteItems} isDrawing={isDrawing} />
         ) : (
-          <div className="flex flex-col items-center rounded-xl bg-white px-5 py-8 text-center"><Check size={30} className="text-[#3199DF]" /><p className="mt-3 font-semibold text-neutral-800">All gifts have been opened</p><p className="mt-1 text-sm text-neutral-500">Thank you for enjoying every surprise ♡</p></div>
+          <div className="flex flex-col items-center rounded-xl bg-neutral-50 px-5 py-8 text-center">
+            <Check size={28} className="text-pink-500" />
+            <p className="mt-3 font-semibold text-neutral-900">Semua hadiah sudah dibuka</p>
+          </div>
         )}
-        {!selectedGift && availableGifts.length > 0 && (<DrawButton onClick={isDrawing ? stopDraw : startDraw} isDrawing={isDrawing} isStopping={isStopping} />)}
-        {selectedGift && availableGifts.length > 0 && (<ResetButton onClick={resetDraw} />)}
+
+        {!locked && !selectedGift && availableGifts.length > 0 && (
+          <DrawButton onClick={isDrawing ? stopDraw : startDraw} isDrawing={isDrawing} isStopping={isStopping} drawCount={drawCount} maxDraws={MAX_DRAWS} />
+        )}
+        {!locked && selectedGift && <ResetButton onClick={resetDraw} />}
       </div>
     </section>
   )
 }
-
