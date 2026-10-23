@@ -45,11 +45,15 @@ export function UploadPage({ onSuccess, onClose }) {
     setIsUploading(true)
 
     try {
+      const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME
+      const uploadPreset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET || 'ml_default'
+      if (!cloudName) throw new Error('Cloudinary cloud name (VITE_CLOUDINARY_CLOUD_NAME) not configured.')
+
       const formData = new FormData()
       formData.append('file', fileToUpload)
-      formData.append('upload_preset', 'ml_default')
+      formData.append('upload_preset', uploadPreset)
 
-      const uploadResponse = await fetch('https://api.cloudinary.com/v1_1/ps4mcdsw/image/upload', {
+      const uploadResponse = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
         method: 'POST',
         body: formData,
       })
