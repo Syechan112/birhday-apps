@@ -1,6 +1,6 @@
 import { ArrowRight, CalendarDays, ChevronLeft, ChevronRight, X } from 'lucide-react'
 import { Button } from '../../common/Button'
-import { MONTHS, WEEKDAYS, toDateString, formatDate } from './calendarUtils'
+import { MONTHS, WEEKDAYS, toDateString, formatDate } from '../../../utils/calendarUtils'
 
 export function CalendarModal({ calendarOpen, setCalendarOpen, yearPickerOpen, setYearPickerOpen, calendarMonth, setCalendarMonth, date, setDate, today, now, onError }) {
   if (!calendarOpen) return null

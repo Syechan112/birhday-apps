@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { ArrowRight, CalendarDays } from 'lucide-react'
 import { Button } from '../common/Button'
 import { CalendarModal } from './form/CalendarModal'
-import { formatDate, parseDate, toDateString } from './form/calendarUtils'
+import { formatDate, parseDate, toDateString } from '../../utils/calendarUtils'
 
 export function BirthdayForm({ onStart }) {
   const now = new Date()

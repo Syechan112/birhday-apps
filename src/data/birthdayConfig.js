@@ -4,59 +4,43 @@ export const birthdayConfig = {
     {
       id: 1,
       image: "/images/photo-1.jpg",
-      caption: "A little memory",
-      message: "Makasih sudah hadir di dunia.",
+      caption: "A good memory",
+      message: "Senang rasanya bisa mengenalmu. Semoga selalu ada hal baik yang kamu temui setiap hari.",
     },
     {
       id: 2,
       image: "/images/photo-2.jpg",
-      caption: "A little memory",
-      message: "Semoga hari-harimu dipenuhi hal baik.",
+      caption: "For your new chapter",
+      message: "Semoga apa yang sedang kamu usahakan bisa berjalan dengan baik. Jangan lupa istirahat juga.",
     },
     {
       id: 3,
       image: "/images/photo-3.jpg",
-      caption: "A little memory",
-      message: "Jangan lupa bahagia, ya.",
-    },
-    {
-      id: 4,
-      image: "/images/photo-4.jpg",
-      caption: "A little memory",
-      message: "Satu tahun lagi, satu bab baru lagi.",
-    },
-    {
-      id: 5,
-      image: "/images/photo-5.jpg",
-      caption: "A little memory",
-      message: "Semoga selalu menemukan alasan untuk tersenyum.",
-    },
-    {
-      id: 6,
-      image: "/images/photo-6.jpg",
-      caption: "A little memory",
-      message: "Terima kasih sudah menjadi dirimu sendiri.",
+      caption: "A little reminder",
+      message: "Semoga kamu selalu punya alasan untuk tersenyum, bahkan di hari-hari yang biasa saja.",
     },
   ],
   birthdayMessage: `Selamat ulang tahun!
 
-Hari ini bukan cuma tentang bertambahnya umur, tetapi juga tentang semua hal yang sudah kamu lewati dan semua hal baik yang masih menunggumu.
+Semoga di usia yang baru ini, ada banyak hal baik yang datang ke hidupmu.
 
-Semoga kamu selalu punya keberanian untuk mencoba, ketenangan saat menghadapi hari sulit, dan orang-orang yang membuatmu merasa dihargai.
+Semoga semua yang sedang kamu usahakan perlahan menemukan jalannya, diberi kesehatan, dan selalu dikelilingi orang-orang yang tulus.
 
-Terima kasih sudah menjadi dirimu sendiri. Semoga bab baru ini membawa lebih banyak kebahagiaan, cerita baik, dan alasan untuk tersenyum.
+Tidak semua hari akan berjalan sesuai rencana, tapi semoga kamu selalu punya kekuatan untuk melewatinya dan kesempatan untuk memulai lagi.
 
-Happy Birthday!`,
+Terima kasih sudah menjadi bagian dari banyak cerita. Semoga tahun ini membawa pengalaman baru, lebih banyak kebahagiaan, dan hal-hal yang layak kamu syukuri.
+
+Selamat ulang tahun. Semoga harimu menyenangkan, ya.`,
   certificate: {
-    title: "SERTIFIKAT RESMI KELULUSAN MENAMBAH UMUR",
-    badge: "Certified Main Character",
-    closing: "Selamat atas kelulusan menambah umur. Semoga tahun-tahun berikutnya semakin cerah.",
+    title: "SERTIFIKAT KENAIKAN USIA",
+    badge: "Officially One Year Older",
+    closing: "Selamat bertambah usia. Semoga tahun ini membawa banyak pengalaman baik dan pencapaian baru.",
   },
   badges: [
-    "Certified Main Character",
-    "Senior Professional Overthinker",
-    "Level Up Specialist",
-    "Official Happiness Collector",
-    "Survived Another Year",
+    "Officially One Year Older",
+    "Professional Overthinker",
+    "Level Up Complete",
+    "Collector of Good Memories",
+    "Made It Through Another Year",
   ],
 }
