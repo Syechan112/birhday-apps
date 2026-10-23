@@ -1,0 +1,18 @@
+- generic [ref=e4]:
+  - banner [ref=e5]
+  - main [ref=e6]:
+    - generic [ref=e7]:
+      - generic:
+        - generic:
+          - heading "A little surprise!" [level=2]: A littlesurprise!
+      - generic [ref=e12]:
+        - generic [ref=e13]:
+          - generic [ref=e14]: Nama kamu
+          - textbox "Nama kamu" [active] [ref=e15]:
+            - /placeholder: Masukkan nama
+        - generic:
+          - generic: Tanggal lahir
+          - button "Tanggal lahir":
+            - generic: Pilih tanggal lahir
+        - generic:
+          - button "Buka Hadiahmu!"

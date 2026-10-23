@@ -1,0 +1,2 @@
+[      83ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=97e75255:22164
+[    9927ms] [WARNING] No target found. Make sure the element you're trying to animate is accessible before creating your animation. @ http://localhost:5173/node_modules/.vite/deps/animejs.js?v=a1d4d25d:2595

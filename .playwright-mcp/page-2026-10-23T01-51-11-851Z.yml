@@ -1,0 +1,16 @@
+- generic [ref=f2e3]:
+  - banner [ref=f2e6]
+  - main [ref=f2e7]:
+    - generic [ref=f2e13]:
+      - generic [ref=f2e14]:
+        - paragraph [ref=f2e15]: Hari spesialmu telah tiba
+        - heading "Happy Birthday, Bob Suprime!" [level=1] [ref=f2e16]
+      - generic [ref=f2e17]:
+        - paragraph [ref=f2e18]: Kamu sudah menghabiskan
+        - generic [ref=f2e19]: "1314.392195335277"
+        - paragraph [ref=f2e20]: tahun di bumi
+        - generic [ref=f2e21]:
+          - generic [ref=f2e22]: 625.117 hari total
+          - generic [ref=f2e23]: 186 hari sejak ultah terakhir
+      - paragraph [ref=f2e24]: Dunia punya alasan lagi untuk merayakan kehadiranmu.
+      - button "Lanjut ke Hadiah →" [ref=f2e25]
